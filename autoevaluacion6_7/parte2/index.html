@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style>
+    table, td, tr, th {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    .category-container {
+      display: flex;
+      align-items: center;
+    }
+    .category-label {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <x-crud></x-crud>
+
+  <script type="text/javascript">
+    //WebComponents (MVC)
+
+    class CRUDModel {
+      constructor(view) {
+        this.dataContainer = []; // para almacenar los datos de los usuarios
+        this.innerView = view; // Establece la referencia a la vista
+      }
+
+      create(data) {
+        this.dataContainer.push(data);
+        console.log(this.dataContainer);
+        this.innerView.render();  // Llama al método render() de la vista
+      }
+
+      edit() {
+        // Implementa la lógica para editar los datos
+      }
+
+      delete()
+      {
+        // Implementa la lógica para eliminar los datos
+      }
+    }
+
+    class CRUDViewController {
+      constructor(view, model) {
+        this.innerView = view;
+        this.innerModel = model;
+
+        this.innerView.createButton.onclick = () => this.oncreatebuttonclick();
+        
+      }
+      oncreatebuttonclick() {
+        const data = this.innerView.getDataInput();
+        this.innerModel.create(data);
+        this.innerView.render();
+        this.innerView.clearForm();
+      }
+    }
+
+    class CRUDView extends HTMLElement {
+      constructor() {
+        super();
+
+        this.viewTitle = document.createElement('h1');
+        this.viewTitle.innerText = 'CRUDApplication';
+
+        this.contactForm = document.createElement('form');
+        this.contactForm.id = 'contactForm';
+
+        this.name = document.createElement('input');
+        this.name.id = 'name'; 
+        this.name.type = 'text';
+        this.name.placeholder = 'Name';
+        this.name.required = true; 
+
+        this.surname = document.createElement('input');
+        this.surname.id = 'surname';
+        this.surname.type = 'text';
+        this.surname.placeholder = 'Surname';
+        this.surname.required = true; 
+
+        this.phone = document.createElement('input');
+        this.phone.id = 'phone'
+        this.phone.type = 'number';
+        this.phone.placeholder = 'Telefono';
+        this.phone.required = true; 
+
+        this.listaOrdenada = document.createElement('ul');
+        this.listaOrdenada.id = 'listaUsuario';
+
+        this.field = document.createElement('label');
+        this.field.htmlFor = 'category';
+        this.field.innerText = 'Categoria';
+        this.field.classList.add('category-label');
+
+        this.selector = document.createElement('select');
+        this.selector.id = 'category';
+        this.selector.name = 'category';
+
+        this.opcionAmigos = document.createElement('option');
+        this.opcionAmigos.value = 'amigos';
+        this.opcionAmigos.innerText = 'Amigos';
+
+        this.opcionTrabajo = document.createElement('option');
+        this.opcionTrabajo.value = 'trabajo';
+        this.opcionTrabajo.innerText = 'Trabajo';
+
+        this.opcionEstudio = document.createElement('option');
+        this.opcionEstudio.value = 'estudio';
+        this.opcionEstudio.innerText = 'Estudio';
+
+        this.opcionFamilia = document.createElement('option');
+        this.opcionFamilia.value = 'familia';
+        this.opcionFamilia.innerText = 'Familia'; 
+
+        this.opcionFavoritos = document.createElement('option');
+        this.opcionFavoritos.value = 'favorito';
+        this.opcionFavoritos.innerText = 'Favorito'; 
+
+        this.opcionServicio = document.createElement('option');
+        this.opcionServicio.value = 'servicio';
+        this.opcionServicio.innerText = 'Servicio';
+
+        this.createButton = document.createElement('button');
+        this.createButton.innerText = 'create';
+        this.createButton.type = 'submit';
+
+        this.updateButton = document.createElement('button');
+        this.updateButton.innerText = 'update';
+
+        this.deleteButton = document.createElement('button');
+        this.deleteButton.innerText = 'delete';
+
+        this.dataTitle = document.createElement('h4');
+        this.dataTitle.innerText = 'Data:';
+
+        this.result = document.createElement('table');
+        this.resultHeader = this.result.createTHead();
+        this.resultBody = this.result.createTBody();
+
+        let columnTags = ['Name', 'Surname', 'Phone', 'Category'];
+
+        this.resultHeaderRow = this.resultHeader.insertRow();
+
+        for (let tag of columnTags) {
+          let columnElement = document.createElement('th');
+          columnElement.innerText = tag;
+          this.resultHeaderRow.insertCell().appendChild(columnElement);
+        }
+
+        this.appendChild(this.viewTitle);
+        this.appendChild(this.contactForm);
+        this.contactForm.appendChild(this.name);
+        this.contactForm.appendChild(this.surname);
+        this.contactForm.appendChild(this.phone);
+        this.appendChild(this.listaOrdenada);
+        this.appendChild(this.field);
+        this.appendChild(this.selector);
+        this.selector.appendChild(this.opcionAmigos);
+        this.selector.appendChild(this.opcionTrabajo);
+        this.selector.appendChild(this.opcionEstudio);
+        this.selector.appendChild(this.opcionFamilia);
+        this.selector.appendChild(this.opcionFavoritos);
+        this.selector.appendChild(this.opcionServicio);
+        this.appendChild(document.createElement('br'));
+        this.appendChild(document.createElement('br'));
+        this.appendChild(this.createButton);
+        this.appendChild(this.updateButton);
+        this.appendChild(this.deleteButton);
+        this.appendChild(document.createElement('br'));
+        this.appendChild(this.dataTitle);
+        this.appendChild(this.result);
+
+        // Controller
+        this.innerModel = new CRUDModel(this);
+        this.innerController = new CRUDViewController(this, this.innerModel);
+      }
+
+      connectedCallback() {
+
+      }
+
+      disconnectedCallback() {
+
+      }
+
+      getDataInput() {
+        let data = {
+          Name: this.name.value,
+          Surname: this.surname.value,
+          Phone: this.phone.value,
+          Category: this.selector.value
+        }
+
+        return data;
+      }
+
+
+      render() {
+        while (this.resultBody.firstChild) {
+          this.resultBody.firstChild.remove();
+        }
+
+        let id = 1;
+        for (let data of this.innerModel.dataContainer) {
+          let row = this.resultBody.insertRow();
+
+          let idCell = row.insertCell();
+          idCell.innerText = id++;
+          for (let key in data) {
+            let valueCell = row.insertCell();
+            valueCell.innerText = data[key];
+          }
+        }
+        
+      }
+      clearForm() {
+        this.name.value = '';
+        this.surname.value = '';
+        this.phone.value = '';
+        this.selector.value = '';
+      }}
+
+    
+
+    customElements.define('x-crud', CRUDView);
+
+    function main() {
+      let appView = new CRUDView();
+      let existingAppView = document.querySelector('x-crud');
+      if (existingAppView) {
+        existingAppView.remove();
+      }
+      document.body.appendChild(appView);
+    }
+
+    window.addEventListener('DOMContentLoaded', main);
+  </script>
+</body> 
+</html>
+
+
+
