@@ -16,7 +16,25 @@
     .category-label {
       margin-right: 10px;
     }
-  </style>
+    .amigos {
+      background-color: yellow;
+    }
+    .trabajo {
+      background-color: cyan;
+    }
+    .estudio {
+      background-color: orange;
+    }
+    .familia {
+      background-color: green;
+    }
+    .favorito {
+      background-color: pink;
+    }
+    .servicio {
+       background-color: purple;
+    }
+</style>
 </head>
 <body>
   <x-crud></x-crud>
@@ -216,6 +234,7 @@
             let valueCell = row.insertCell();
             valueCell.innerText = data[key];
           }
+          row.classList.add(data.Category);
         }
         
       }
